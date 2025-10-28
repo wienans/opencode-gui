@@ -85,7 +85,7 @@ function App() {
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
+    if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) {
       e.preventDefault();
       handleSubmit(e);
     }
@@ -94,23 +94,26 @@ function App() {
   return (
     <div className="app">
       <form className="input-container" onSubmit={handleSubmit}>
-        <textarea
-          ref={inputRef}
-          className="prompt-input"
-          placeholder={isReady ? "Ask OpenCode anything..." : "Initializing OpenCode..."}
-          value={input}
-          onChange={(e) => setInput(e.target.value)}
-          onKeyDown={handleKeyDown}
-          disabled={!isReady || isThinking}
-          rows={1}
-        />
-        <button 
-          type="submit" 
-          className="send-button"
-          disabled={!isReady || isThinking || !input.trim()}
-        >
-          Send
-        </button>
+        <div className="textarea-wrapper">
+          <textarea
+            ref={inputRef}
+            className="prompt-input"
+            placeholder={isReady ? "Ask OpenCode anything..." : "Initializing OpenCode..."}
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+            onKeyDown={handleKeyDown}
+            disabled={!isReady || isThinking}
+            rows={1}
+          />
+          <button 
+            type="submit" 
+            className="shortcut-button"
+            disabled={!isReady || isThinking || !input.trim()}
+            aria-label="Submit (Cmd+Enter)"
+          >
+            ⌘⏎
+          </button>
+        </div>
       </form>
 
       {isThinking && (
