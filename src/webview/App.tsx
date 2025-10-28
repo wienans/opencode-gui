@@ -132,8 +132,16 @@ function App() {
           break;
         }
         case "message-update": {
-          // Final message state - use this to ensure consistency
+          // Message metadata update - ignore if it doesn't have parts
+          // The message.updated SSE events don't include the parts array,
+          // so we shouldn't overwrite our streaming state
           const { message: finalMessage } = message;
+          
+          // Only update if the message includes parts data
+          if (!finalMessage.parts || finalMessage.parts.length === 0) {
+            console.log('[Webview] Ignoring message-update without parts');
+            break;
+          }
           
           setMessages((prev) => {
             const filtered = prev.filter((m) => m.id !== "thinking");

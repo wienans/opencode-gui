@@ -39,6 +39,8 @@
   - **Documentation**: See [docs/todos/sse-streaming.md](docs/todos/sse-streaming.md)
   - **What Works**: Real-time tool call visibility (pending → running → completed), text streaming with deltas, reasoning blocks, proper session isolation, error handling and cleanup
   - **Testing Needed**: The implementation is complete and builds successfully, but needs real-world testing with prompts that trigger tool calls to verify the streaming behavior works as expected
+
+- [ ] Rewrite in Solidjs
 - [ ] Agent switcher - add a little button to the left of the send button in the prompt editor that when clicked lets us toggle between different agents. Also, it seems like the send-message button is just absolutely positioned. Let's add extra space to the bottom of the editor to make space for both of the send message button and the agent switcher. The send message button should be secondary style, and agent switcher should be quiet style.
 - [ ] Style improvements: let's lower the horizontal paddings on all the messages, remove the placeholder message on the prompt editor as well as the intro help message. There's also like a "Chat" section heading on the extension. Does that need to be there? Can we get rid of that.
 - [ ] Markdown support in assistant messages
