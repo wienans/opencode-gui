@@ -45,8 +45,24 @@
   - **Details**: Migrated all React hooks to SolidJS primitives (createSignal, createEffect, onMount), updated build config, rewrote App.tsx (440 lines) and main.tsx. Build passes with no errors. Webview bundle reduced from ~40KB to 16.25KB (6.51KB gzipped). All features preserved: message handling, streaming, tool calls, auto-scroll, auto-resize, keyboard shortcuts.
   - **Documentation**: See [docs/todos/rewrite-solidjs.md](docs/todos/rewrite-solidjs.md)
   - **Testing**: Build verified successful. Runtime testing in Extension Development Host recommended to verify no regressions.
-- [ ] Agent switcher - add a little button to the left of the send button in the prompt editor that when clicked lets us toggle between different agents. Also, it seems like the send-message button is just absolutely positioned. Let's add extra space to the bottom of the editor to make space for both of the send message button and the agent switcher. The send message button should be secondary style, and agent switcher should be quiet style.
-- [ ] Style improvements: let's lower the horizontal paddings on all the messages, remove the placeholder message on the prompt editor as well as the intro help message. There's also like a "Chat" section heading on the extension. Does that need to be there? Can we get rid of that.
+- [x] Agent switcher - add a little button to the left of the send button in the prompt editor that when clicked lets us toggle between different agents. Also, it seems like the send-message button is just absolutely positioned. Let's add extra space to the bottom of the editor to make space for both of the send message button and the agent switcher. The send message button should be secondary style, and agent switcher should be quiet style. If opencode api gives us access to color, we can use that as the text color for the agent switcher text.
+
+  - **Status**: Completed - agent switcher fully implemented with dropdown UI, backend API integration, and proper styling
+  - **Details**: Added agent switcher button (quiet style) to the left of the send button (secondary style) in the prompt editor. Both buttons are positioned in a `.input-buttons` row with proper spacing. The agent switcher displays a dropdown of available agents from the OpenCode API, filters to only "primary" or "all" mode agents, auto-selects the first agent, and sends the selected agent with each prompt. Backend fully wired up to support agent selection via OpenCodeService and OpenCodeViewProvider.
+  - **Documentation**: See [docs/todos/agent-switcher.md](docs/todos/agent-switcher.md)
+  - **Known Limitations**: OpenCode Agent API doesn't provide color property, so color customization from agent config is not available. Agent selection doesn't persist across extension reloads. No visual indicator of which agent responded.
+
+- [ ] Style improvements: let's lower the horizontal paddings on all the messages, remove the placeholder message on the prompt editor as well as the intro help message. There's also like a "Chat" section heading on the extension. Does that need to be there? Can we get rid of that. I like Amp's style. Here's some random class names I copied from their extension CSS we can copy. We don't use Tailwind, but we can re-build it in CSS.
+      Tool call card outer:
+      class="action-element max-w-[100%] w-full rounded-md overflow-hidden border border-border/80"
+      Tool call card inner:
+      flex flex-col gap-1.5 font-normal bg-card/60 p-1.5
+
+Main scoll pane:
+overflow-auto relative h-full max-h-full scroll-p-2 p-2
+
+Use the corresponding css units for these tailwind classes and use them in the extension. Find opportunities for alignment. Ask oracle to review the css file afterward to find opportunities for improvement.
+
 - [ ] Markdown support in assistant messages
 - [ ] @-mention support
 - [ ] New session button

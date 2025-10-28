@@ -67,10 +67,20 @@ body {
   color: var(--vscode-input-placeholderForeground);
 }
 
-.shortcut-button {
+/* Button row at bottom of input */
+.input-buttons {
   position: absolute;
   bottom: 4px;
+  left: 4px;
   right: 4px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+}
+
+.shortcut-button {
+  margin-left: auto;
   padding: 4px 8px;
   border: none;
   border-radius: 3px;
@@ -93,6 +103,18 @@ body {
 .shortcut-button:disabled {
   opacity: 0.3;
   cursor: not-allowed;
+}
+
+.shortcut-button--secondary {
+  border: 1px solid var(--vscode-button-border);
+  background-color: var(--vscode-button-secondaryBackground);
+  color: var(--vscode-button-secondaryForeground);
+  opacity: 0.8;
+}
+
+.shortcut-button--secondary:hover:not(:disabled) {
+  opacity: 1;
+  background-color: var(--vscode-button-secondaryHoverBackground);
 }
 
 /* Thinking Block */
@@ -372,4 +394,80 @@ body.vscode-dark {
 
 body.vscode-high-contrast {
   /* High contrast specific styles */
+}
+
+/* Agent Switcher */
+.agent-switcher {
+  position: relative;
+}
+
+.agent-switcher-button {
+  padding: 4px 8px;
+  border: none;
+  border-radius: 3px;
+  background-color: transparent;
+  color: var(--vscode-foreground);
+  font-family: var(--vscode-font-family);
+  font-size: 11px;
+  cursor: pointer;
+  opacity: 0.6;
+  transition: opacity 0.15s, background-color 0.15s;
+  white-space: nowrap;
+}
+
+.agent-switcher-button:hover {
+  opacity: 1;
+  background-color: var(--vscode-list-hoverBackground);
+}
+
+/* Dropdown */
+.agent-dropdown {
+  position: absolute;
+  bottom: 100%;
+  left: 0;
+  margin-bottom: 4px;
+  min-width: 200px;
+  max-height: 300px;
+  overflow-y: auto;
+  background-color: var(--vscode-dropdown-background);
+  border: 1px solid var(--vscode-dropdown-border);
+  border-radius: 4px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  z-index: 1000;
+}
+
+.agent-option {
+  width: 100%;
+  padding: 8px 12px;
+  border: none;
+  background-color: transparent;
+  color: var(--vscode-dropdown-foreground);
+  font-family: var(--vscode-font-family);
+  font-size: 13px;
+  text-align: left;
+  cursor: pointer;
+  transition: background-color 0.15s;
+  display: block;
+}
+
+.agent-option:hover {
+  background-color: var(--vscode-list-hoverBackground);
+}
+
+.agent-option.selected {
+  background-color: var(--vscode-list-activeSelectionBackground);
+  color: var(--vscode-list-activeSelectionForeground);
+}
+
+.agent-option-name {
+  font-weight: 500;
+  margin-bottom: 2px;
+}
+
+.agent-option-description {
+  font-size: 11px;
+  opacity: 0.8;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }

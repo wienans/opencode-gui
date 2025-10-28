@@ -28,6 +28,13 @@ interface Message {
   parts?: MessagePart[];
 }
 
+interface Agent {
+  name: string;
+  description?: string;
+  mode: "subagent" | "primary" | "all";
+  builtIn: boolean;
+}
+
 // Get VS Code API
 declare const acquireVsCodeApi: any;
 const vscode = acquireVsCodeApi();
@@ -37,6 +44,8 @@ function App() {
   const [messages, setMessages] = createSignal<Message[]>([]);
   const [isThinking, setIsThinking] = createSignal(false);
   const [isReady, setIsReady] = createSignal(false);
+  const [agents, setAgents] = createSignal<Agent[]>([]);
+  const [selectedAgent, setSelectedAgent] = createSignal<string | null>(null);
   
   let inputRef: HTMLTextAreaElement;
   let messagesEndRef: HTMLDivElement;
@@ -52,6 +61,13 @@ function App() {
       switch (message.type) {
         case "init":
           setIsReady(message.ready);
+          break;
+        case "agentList":
+          setAgents(message.agents || []);
+          // Select first agent by default if none selected
+          if (!selectedAgent() && message.agents && message.agents.length > 0) {
+            setSelectedAgent(message.agents[0].name);
+          }
           break;
         case "thinking":
           setIsThinking(message.isThinking);
@@ -205,6 +221,9 @@ function App() {
     // Tell extension we're ready
     vscode.postMessage({ type: "ready" });
 
+    // Request agent list
+    vscode.postMessage({ type: "getAgents" });
+
     onCleanup(() => window.removeEventListener("message", messageHandler));
   });
 
@@ -247,6 +266,7 @@ function App() {
     vscode.postMessage({
       type: "sendPrompt",
       text: input(),
+      agent: selectedAgent(),
     });
 
     // Clear input
@@ -324,12 +344,70 @@ function App() {
     }
   };
 
+  const AgentSwitcher = () => {
+    const [isOpen, setIsOpen] = createSignal(false);
+    
+    const currentAgent = () => {
+      const name = selectedAgent();
+      return agents().find(a => a.name === name);
+    };
+    
+    // Close dropdown when clicking outside
+    createEffect(() => {
+      if (isOpen()) {
+        const handleClickOutside = () => setIsOpen(false);
+        setTimeout(() => {
+          document.addEventListener('click', handleClickOutside, { once: true });
+        }, 0);
+      }
+    });
+    
+    return (
+      <div class="agent-switcher">
+        <button
+          type="button"
+          class="agent-switcher-button"
+          onClick={(e) => {
+            e.stopPropagation();
+            setIsOpen(!isOpen());
+          }}
+          aria-label="Switch agent"
+        >
+          {currentAgent()?.name || 'Agent'}
+        </button>
+        <Show when={isOpen()}>
+          <div class="agent-dropdown">
+            <For each={agents()}>
+              {(agent) => (
+                <button
+                  type="button"
+                  class={`agent-option ${selectedAgent() === agent.name ? 'selected' : ''}`}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setSelectedAgent(agent.name);
+                    setIsOpen(false);
+                  }}
+                >
+                  <div class="agent-option-name">{agent.name}</div>
+                  <Show when={agent.description}>
+                    <div class="agent-option-description">{agent.description}</div>
+                  </Show>
+                </button>
+              )}
+            </For>
+          </div>
+        </Show>
+      </div>
+    );
+  };
+
   const renderInput = () => (
     <form class="input-container" onSubmit={handleSubmit}>
       <div class="textarea-wrapper">
         <textarea
           ref={inputRef!}
           class="prompt-input"
+          style={{ "padding-bottom": "32px" }}
           placeholder={
             isReady() ? "Ask OpenCode anything..." : "Initializing OpenCode..."
           }
@@ -338,14 +416,19 @@ function App() {
           onKeyDown={handleKeyDown}
           disabled={!isReady() || isThinking()}
         />
-        <button
-          type="submit"
-          class="shortcut-button"
-          disabled={!isReady() || isThinking() || !input().trim()}
-          aria-label="Submit (Cmd+Enter)"
-        >
-          ⌘⏎
-        </button>
+        <div class="input-buttons">
+          <Show when={agents().length > 0}>
+            <AgentSwitcher />
+          </Show>
+          <button
+            type="submit"
+            class="shortcut-button shortcut-button--secondary"
+            disabled={!isReady() || isThinking() || !input().trim()}
+            aria-label="Submit (Cmd+Enter)"
+          >
+            ⌘⏎
+          </button>
+        </div>
       </div>
     </form>
   );

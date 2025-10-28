@@ -1,18 +1,24 @@
-import * as vscode from 'vscode';
-import * as path from 'path';
-import * as fs from 'fs';
-import { createOpencode, type OpencodeClient } from '@opencode-ai/sdk';
-import type { Session, Config, Event } from '@opencode-ai/sdk';
+import type { Agent, Config, Event, Session } from "@opencode-ai/sdk";
+import { createOpencode, type OpencodeClient } from "@opencode-ai/sdk";
+import * as fs from "fs";
+import * as path from "path";
+import * as vscode from "vscode";
 
 // Debug logging to file
-const debugLogPath = path.join(require('os').tmpdir(), 'opencode-vscode-debug.log');
+const debugLogPath = path.join(
+  require("os").tmpdir(),
+  "opencode-vscode-debug.log"
+);
 function debugLog(message: string, data?: any) {
-  const timestamp = new Date().toISOString();
-  const logLine = `[${timestamp}] ${message}${data ? '\n' + JSON.stringify(data, null, 2) : ''}\n`;
-  fs.appendFileSync(debugLogPath, logLine);
+  // const timestamp = new Date().toISOString();
+  // const logLine = `[${timestamp}] ${message}${data ? '\n' + JSON.stringify(data, null, 2) : ''}\n`;
+  // fs.appendFileSync(debugLogPath, logLine);
   console.log(message, data);
 }
-debugLog(`=== OpenCode VSCode Debug Log Started ===\nLog file: ${debugLogPath}`);
+
+debugLog(
+  `=== OpenCode VSCode Debug Log Started ===\nLog file: ${debugLogPath}`
+);
 
 interface OpencodeInstance {
   client: OpencodeClient;
@@ -27,6 +33,7 @@ export class OpenCodeService {
   private currentSessionId: string | null = null;
   private isInitializing = false;
   private workspaceDir?: string;
+  private agents: Agent[] = [];
 
   async initialize(workspaceRoot?: string): Promise<void> {
     if (this.opencode || this.isInitializing) {
@@ -36,7 +43,8 @@ export class OpenCodeService {
     this.isInitializing = true;
 
     const prevCwd = process.cwd();
-    const shouldChdir = Boolean(workspaceRoot) && fs.existsSync(workspaceRoot as string);
+    const shouldChdir =
+      Boolean(workspaceRoot) && fs.existsSync(workspaceRoot as string);
 
     // Track workspace directory for SSE subscription
     if (shouldChdir) {
@@ -49,10 +57,17 @@ export class OpenCodeService {
 
       // Log config source for debugging
       if (config) {
-        console.log(`✓ Loaded workspace config from: ${path.join(workspaceRoot!, 'opencode.json')}`);
-        console.log('Config values:', JSON.stringify(config, null, 2));
+        console.log(
+          `✓ Loaded workspace config from: ${path.join(
+            workspaceRoot!,
+            "opencode.json"
+          )}`
+        );
+        console.log("Config values:", JSON.stringify(config, null, 2));
       } else {
-        console.log('No workspace config found, will use OpenCode default config');
+        console.log(
+          "No workspace config found, will use OpenCode default config"
+        );
       }
 
       // Temporarily switch cwd so the SDK's spawn inherits the workspace as cwd
@@ -63,7 +78,7 @@ export class OpenCodeService {
 
       // Create OpenCode instance with server and client
       this.opencode = await createOpencode({
-        hostname: '127.0.0.1',
+        hostname: "127.0.0.1",
         port: 0, // Let it choose a random available port
         config: config || {},
       });
@@ -73,7 +88,7 @@ export class OpenCodeService {
       // Verify the config was actually applied by querying the server
       await this.verifyConfig(config);
     } catch (error) {
-      console.error('Failed to initialize OpenCode:', error);
+      console.error("Failed to initialize OpenCode:", error);
       vscode.window.showErrorMessage(
         `Failed to start OpenCode: ${(error as Error).message}`
       );
@@ -84,7 +99,7 @@ export class OpenCodeService {
         try {
           process.chdir(prevCwd);
         } catch (e) {
-          console.warn('Failed to restore working directory:', e);
+          console.warn("Failed to restore working directory:", e);
         }
       }
       this.isInitializing = false;
@@ -96,20 +111,22 @@ export class OpenCodeService {
       return null;
     }
 
-    const configPath = path.join(workspaceRoot, 'opencode.json');
-    
+    const configPath = path.join(workspaceRoot, "opencode.json");
+
     if (fs.existsSync(configPath)) {
       try {
-        const configContent = fs.readFileSync(configPath, 'utf-8');
+        const configContent = fs.readFileSync(configPath, "utf-8");
         // Remove comments from JSON (simple approach)
-        const cleanedContent = configContent.replace(/\/\/.*$/gm, '');
+        const cleanedContent = configContent.replace(/\/\/.*$/gm, "");
         const config = JSON.parse(cleanedContent) as Partial<Config>;
         console.log(`Found workspace config at: ${configPath}`);
         return config;
       } catch (error) {
-        console.error('Failed to parse workspace opencode.json:', error);
+        console.error("Failed to parse workspace opencode.json:", error);
         vscode.window.showWarningMessage(
-          `Found opencode.json but failed to parse it: ${(error as Error).message}`
+          `Found opencode.json but failed to parse it: ${
+            (error as Error).message
+          }`
         );
       }
     }
@@ -117,53 +134,88 @@ export class OpenCodeService {
     return null;
   }
 
-  private async verifyConfig(expectedConfig: Partial<Config> | null): Promise<void> {
+  private async verifyConfig(
+    expectedConfig: Partial<Config> | null
+  ): Promise<void> {
     if (!this.opencode) {
       return;
     }
 
     try {
       const configResult = await this.opencode.client.config.get();
-      
+
       if (configResult.error) {
-        console.warn('Failed to verify config:', configResult.error);
+        console.warn("Failed to verify config:", configResult.error);
         return;
       }
 
       const activeConfig = configResult.data;
-      console.log('Active OpenCode config:', JSON.stringify(activeConfig, null, 2));
+      console.log(
+        "Active OpenCode config:",
+        JSON.stringify(activeConfig, null, 2)
+      );
 
       // If we loaded a workspace config, verify key settings match
       if (expectedConfig) {
         const verificationsNeeded = [];
-        
-        if (expectedConfig.model && activeConfig.model !== expectedConfig.model) {
-          verificationsNeeded.push(`model (expected: ${expectedConfig.model}, got: ${activeConfig.model})`);
+
+        if (
+          expectedConfig.model &&
+          activeConfig.model !== expectedConfig.model
+        ) {
+          verificationsNeeded.push(
+            `model (expected: ${expectedConfig.model}, got: ${activeConfig.model})`
+          );
         }
 
         if (verificationsNeeded.length > 0) {
-          console.warn('⚠️ Workspace config may not have been fully applied:');
-          verificationsNeeded.forEach(msg => console.warn(`  - ${msg}`));
+          console.warn("⚠️ Workspace config may not have been fully applied:");
+          verificationsNeeded.forEach((msg) => console.warn(`  - ${msg}`));
         } else {
-          console.log('✓ Workspace config verified and active');
+          console.log("✓ Workspace config verified and active");
         }
       }
     } catch (error) {
-      console.warn('Error verifying config:', error);
+      console.warn("Error verifying config:", error);
     }
+  }
+
+  async getAgents(): Promise<Agent[]> {
+    if (!this.opencode) {
+      throw new Error("OpenCode not initialized");
+    }
+
+    const result = await this.opencode.client.app.agents();
+
+    if (result.error) {
+      throw new Error(`Failed to get agents: ${JSON.stringify(result.error)}`);
+    }
+
+    // Filter to only "primary" or "all" mode agents (not "subagent" only)
+    this.agents = (result.data || []).filter(
+      (agent) => agent.mode === "primary" || agent.mode === "all"
+    );
+
+    debugLog(
+      `[getAgents] Found ${this.agents.length} primary/all agents`,
+      this.agents.map((a) => a.name)
+    );
+    return this.agents;
   }
 
   async createSession(title?: string): Promise<string> {
     if (!this.opencode) {
-      throw new Error('OpenCode not initialized');
+      throw new Error("OpenCode not initialized");
     }
 
     const response = await this.opencode.client.session.create({
-      body: { title: title || 'VSCode Session' },
+      body: { title: title || "VSCode Session" },
     });
 
     if (response.error) {
-      throw new Error(`Failed to create session: ${JSON.stringify(response.error)}`);
+      throw new Error(
+        `Failed to create session: ${JSON.stringify(response.error)}`
+      );
     }
 
     const session = response.data as Session;
@@ -172,35 +224,48 @@ export class OpenCodeService {
     return this.currentSessionId;
   }
 
-  async sendPrompt(text: string, sessionId?: string): Promise<{ parts: Array<{ type: string; text?: string }> }> {
+  async sendPrompt(
+    text: string,
+    sessionId?: string,
+    agent?: string
+  ): Promise<{ parts: Array<{ type: string; text?: string }> }> {
     if (!this.opencode) {
-      throw new Error('OpenCode not initialized');
+      throw new Error("OpenCode not initialized");
     }
 
     const sid = sessionId || this.currentSessionId;
-    
+
     if (!sid) {
-      throw new Error('No active session');
+      throw new Error("No active session");
     }
 
     // Get config to determine which model to use
     const configResult = await this.opencode.client.config.get();
-    
+
     if (configResult.error) {
-      throw new Error(`Failed to get config: ${JSON.stringify(configResult.error)}`);
+      throw new Error(
+        `Failed to get config: ${JSON.stringify(configResult.error)}`
+      );
     }
 
     const config = configResult.data;
-    
+
     // Use the configured model or fallback to Claude
-    const model = config?.model || 'anthropic/claude-3-5-sonnet-20241022';
-    const [providerID, modelID] = model.split('/');
+    const model = config?.model || "anthropic/claude-3-5-sonnet-20241022";
+    const [providerID, modelID] = model.split("/");
+
+    debugLog(
+      `[sendPrompt] Sending to session ${sid}${
+        agent ? ` with agent: ${agent}` : ""
+      }`
+    );
 
     const result = await this.opencode.client.session.prompt({
       path: { id: sid },
       body: {
         model: { providerID, modelID },
-        parts: [{ type: 'text', text }],
+        parts: [{ type: "text", text }],
+        agent: agent || undefined,
       },
     });
 
@@ -214,44 +279,55 @@ export class OpenCodeService {
   async sendPromptStreaming(
     text: string,
     onEvent: (event: Event) => void,
-    sessionId?: string
+    sessionId?: string,
+    agent?: string
   ): Promise<void> {
     if (!this.opencode) {
-      throw new Error('OpenCode not initialized');
+      throw new Error("OpenCode not initialized");
     }
 
     const sid = sessionId || this.currentSessionId;
     if (!sid) {
-      throw new Error('No active session');
+      throw new Error("No active session");
     }
 
     // Get config for model
     const configResult = await this.opencode.client.config.get();
     if (configResult.error) {
-      throw new Error(`Failed to get config: ${JSON.stringify(configResult.error)}`);
+      throw new Error(
+        `Failed to get config: ${JSON.stringify(configResult.error)}`
+      );
     }
 
     const config = configResult.data;
-    const model = config?.model || 'anthropic/claude-3-5-sonnet-20241022';
-    const [providerID, modelID] = model.split('/');
+    const model = config?.model || "anthropic/claude-3-5-sonnet-20241022";
+    const [providerID, modelID] = model.split("/");
 
     // Use the workspace directory used to start the server
     const directory = this.workspaceDir || process.cwd();
-    debugLog(`[sendPromptStreaming] Starting for session ${sid}`, { directory, text });
+    debugLog(
+      `[sendPromptStreaming] Starting for session ${sid}${
+        agent ? ` with agent: ${agent}` : ""
+      }`,
+      { directory, text }
+    );
 
     // Subscribe to SSE events BEFORE sending the prompt to avoid missing events
     const sseResult = await this.opencode.client.event.subscribe({
-      query: { directory }
+      query: { directory },
     });
 
-    debugLog('[sendPromptStreaming] SSE subscription established, sending prompt...');
+    debugLog(
+      "[sendPromptStreaming] SSE subscription established, sending prompt..."
+    );
 
     // Now send the prompt (don't await yet)
     const promptPromise = this.opencode.client.session.prompt({
       path: { id: sid },
       body: {
         model: { providerID, modelID },
-        parts: [{ type: 'text', text }],
+        parts: [{ type: "text", text }],
+        agent: agent || undefined,
       },
     });
 
@@ -260,38 +336,40 @@ export class OpenCodeService {
     try {
       for await (const event of sseResult.stream) {
         eventCount++;
-        
+
         // Filter for events related to our session
         const typedEvent = event as Event;
         const props = (typedEvent as any).properties ?? {};
         const evSessionID = props.sessionID as string | undefined;
-        
+
         // Log all events for our session
         if (!evSessionID || evSessionID === sid) {
           debugLog(`[SSE Event #${eventCount}] ${typedEvent.type}`, {
             sessionID: evSessionID,
-            properties: props
+            properties: props,
           });
-          
+
           onEvent(typedEvent);
-          
+
           // Stop streaming when session goes idle
-          if (typedEvent.type === 'session.idle') {
-            debugLog(`[sendPromptStreaming] Session idle after ${eventCount} events, stopping stream`);
+          if (typedEvent.type === "session.idle") {
+            debugLog(
+              `[sendPromptStreaming] Session idle after ${eventCount} events, stopping stream`
+            );
             break;
           }
         }
       }
     } catch (error) {
-      debugLog('[sendPromptStreaming] SSE streaming error', error);
+      debugLog("[sendPromptStreaming] SSE streaming error", error);
       throw error;
     } finally {
       // Close the SSE connection to avoid leaks
       try {
         (sseResult as any).close?.();
-        debugLog('[sendPromptStreaming] SSE stream closed');
+        debugLog("[sendPromptStreaming] SSE stream closed");
       } catch (e) {
-        debugLog('[sendPromptStreaming] Failed to close SSE stream', e);
+        debugLog("[sendPromptStreaming] Failed to close SSE stream", e);
       }
     }
 
@@ -306,9 +384,11 @@ export class OpenCodeService {
     return this.currentSessionId;
   }
 
-  async getMessages(sessionId: string): Promise<Array<{ info: unknown; parts: unknown[] }>> {
+  async getMessages(
+    sessionId: string
+  ): Promise<Array<{ info: unknown; parts: unknown[] }>> {
     if (!this.opencode) {
-      throw new Error('OpenCode not initialized');
+      throw new Error("OpenCode not initialized");
     }
 
     const result = await this.opencode.client.session.messages({
@@ -316,7 +396,9 @@ export class OpenCodeService {
     });
 
     if (result.error) {
-      throw new Error(`Failed to get messages: ${JSON.stringify(result.error)}`);
+      throw new Error(
+        `Failed to get messages: ${JSON.stringify(result.error)}`
+      );
     }
 
     return (result.data || []) as Array<{ info: unknown; parts: unknown[] }>;

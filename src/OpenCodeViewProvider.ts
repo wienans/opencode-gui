@@ -32,7 +32,7 @@ export class OpenCodeViewProvider implements vscode.WebviewViewProvider {
       async (message) => {
         switch (message.type) {
           case 'sendPrompt':
-            await this._handleSendPrompt(message.text);
+            await this._handleSendPrompt(message.text, message.agent);
             return;
           case 'ready':
             // Webview is ready, send initialization data
@@ -41,12 +41,32 @@ export class OpenCodeViewProvider implements vscode.WebviewViewProvider {
               ready: this._openCodeService.isReady()
             });
             return;
+          case 'getAgents':
+            await this._handleGetAgents();
+            return;
         }
       }
     );
   }
 
-  private async _handleSendPrompt(text: string) {
+  private async _handleGetAgents() {
+    try {
+      const agents = await this._openCodeService.getAgents();
+      this._sendMessage({ 
+        type: 'agentList', 
+        agents 
+      });
+    } catch (error) {
+      console.error('Error getting agents:', error);
+      // Send empty list on error
+      this._sendMessage({ 
+        type: 'agentList', 
+        agents: [] 
+      });
+    }
+  }
+
+  private async _handleSendPrompt(text: string, agent?: string) {
     try {
       // Send thinking state
       this._sendMessage({ type: 'thinking', isThinking: true });
@@ -57,11 +77,12 @@ export class OpenCodeViewProvider implements vscode.WebviewViewProvider {
         sessionId = await this._openCodeService.createSession();
       }
 
-      // Send the prompt with streaming
+      // Send the prompt with streaming, including selected agent
       await this._openCodeService.sendPromptStreaming(
         text,
         (event) => this._handleStreamEvent(event),
-        sessionId
+        sessionId,
+        agent
       );
 
       this._sendMessage({ type: 'thinking', isThinking: false });
