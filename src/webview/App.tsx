@@ -33,6 +33,10 @@ interface Agent {
   description?: string;
   mode: "subagent" | "primary" | "all";
   builtIn: boolean;
+  options?: {
+    color?: string;
+    [key: string]: unknown;
+  };
 }
 
 // Get VS Code API
@@ -359,6 +363,8 @@ function App() {
       setSelectedAgent(agentList[nextIndex].name);
     };
     
+    const agentColor = () => currentAgent()?.options?.color;
+    
     return (
       <button
         type="button"
@@ -366,6 +372,7 @@ function App() {
         onClick={cycleAgent}
         aria-label="Switch agent"
         title={currentAgent()?.description || 'Switch agent'}
+        style={agentColor() ? { color: agentColor() } : {}}
       >
         {currentAgent()?.name || 'Agent'}
       </button>
