@@ -40,17 +40,9 @@ function App() {
   
   let inputRef: HTMLTextAreaElement;
   let messagesEndRef: HTMLDivElement;
-  let updateTimeoutRef: number | null = null;
 
   const hasMessages = () =>
     messages().some((m) => m.type === "user" || m.type === "assistant");
-
-  // Cleanup timeout on unmount
-  onCleanup(() => {
-    if (updateTimeoutRef) {
-      clearTimeout(updateTimeoutRef);
-    }
-  });
 
   onMount(() => {
     // Listen for messages from extension
@@ -77,74 +69,56 @@ function App() {
           }
           break;
         case "part-update": {
-          // Streaming part update
-          const { part, delta } = message;
+          // Streaming part update - SolidJS handles rapid updates efficiently
+          const { part } = message;
           console.log('[Webview] part-update received:', {
             partId: part.id,
             partType: part.type,
             messageID: part.messageID,
-            hasDelta: !!delta
           });
           
-          // Only throttle text updates (rapid streaming)
-          // Tool/reasoning/other updates should be immediate
-          const shouldThrottle = part.type === "text" && delta;
-          
-          const updateMessage = () => {
-            setMessages((prev) => {
-              // Filter out thinking messages
-              const filtered = prev.filter((m) => m.id !== "thinking");
+          setMessages((prev) => {
+            // Filter out thinking messages
+            const filtered = prev.filter((m) => m.id !== "thinking");
+            
+            // Find or create the message for this part
+            const messageIndex = filtered.findIndex((m) => m.id === part.messageID);
+            
+            if (messageIndex === -1) {
+              // New message - create it
+              console.log('[Webview] Creating new message:', part.messageID);
+              return [
+                ...filtered,
+                {
+                  id: part.messageID,
+                  type: "assistant" as const,
+                  parts: [part],
+                },
+              ];
+            } else {
+              // Update existing message
+              const updated = [...filtered];
+              const msg = { ...updated[messageIndex] };
+              const parts = msg.parts || [];
+              const partIndex = parts.findIndex((p) => p.id === part.id);
               
-              // Find or create the message for this part
-              const messageIndex = filtered.findIndex((m) => m.id === part.messageID);
-              
-              if (messageIndex === -1) {
-                // New message - create it
-                console.log('[Webview] Creating new message:', part.messageID);
-                return [
-                  ...filtered,
-                  {
-                    id: part.messageID,
-                    type: "assistant" as const,
-                    parts: [part],
-                  },
-                ];
+              if (partIndex === -1) {
+                // New part - append it
+                console.log('[Webview] Adding new part to message:', part.id);
+                msg.parts = [...parts, part];
               } else {
-                // Update existing message
-                const updated = [...filtered];
-                const msg = { ...updated[messageIndex] };
-                const parts = msg.parts || [];
-                const partIndex = parts.findIndex((p) => p.id === part.id);
-                
-                if (partIndex === -1) {
-                  // New part - append it
-                  console.log('[Webview] Adding new part to message:', part.id);
-                  msg.parts = [...parts, part];
-                } else {
-                  // Update existing part - just replace it
-                  // The server sends the full accumulated text, not deltas
-                  console.log('[Webview] Updating existing part:', part.id);
-                  msg.parts = [...parts];
-                  msg.parts[partIndex] = part;
-                }
-                
-                updated[messageIndex] = msg;
-                console.log('[Webview] Message now has', msg.parts.length, 'parts');
-                return updated;
+                // Update existing part - just replace it
+                // The server sends the full accumulated text, not deltas
+                console.log('[Webview] Updating existing part:', part.id);
+                msg.parts = [...parts];
+                msg.parts[partIndex] = part;
               }
-            });
-          };
-          
-          if (shouldThrottle) {
-            // Throttle text updates
-            if (updateTimeoutRef) {
-              clearTimeout(updateTimeoutRef);
+              
+              updated[messageIndex] = msg;
+              console.log('[Webview] Message now has', msg.parts.length, 'parts');
+              return updated;
             }
-            updateTimeoutRef = window.setTimeout(updateMessage, 100);
-          } else {
-            // Immediate update for tool calls and other non-text parts
-            updateMessage();
-          }
+          });
           break;
         }
         case "message-update": {
