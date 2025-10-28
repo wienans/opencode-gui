@@ -1,11 +1,4 @@
-import type { MessagePart, IncomingMessage } from "../hooks/useVsCodeBridge";
-
-export interface Message {
-  id: string;
-  type: "user" | "assistant";
-  text?: string;
-  parts?: MessagePart[];
-}
+import type { Message, MessagePart, IncomingMessage } from "../types";
 
 export function applyPartUpdate(
   messages: Message[],

@@ -1,6 +1,7 @@
 /* @jsxImportSource solid-js */
 import { createEffect, Show } from "solid-js";
-import type { Agent } from "../hooks/useVsCodeBridge";
+import type { Agent } from "../types";
+import { AgentSwitcher } from "./AgentSwitcher";
 
 interface InputBarProps {
   value: string;
@@ -45,37 +46,6 @@ export function InputBar(props: InputBarProps) {
     }
   };
 
-  const AgentSwitcher = () => {
-    const currentAgent = () => {
-      const name = props.selectedAgent;
-      return props.agents.find(a => a.name === name);
-    };
-    
-    const cycleAgent = () => {
-      const agentList = props.agents;
-      if (agentList.length === 0) return;
-      
-      const currentIndex = agentList.findIndex(a => a.name === props.selectedAgent);
-      const nextIndex = (currentIndex + 1) % agentList.length;
-      props.onAgentChange(agentList[nextIndex].name);
-    };
-    
-    const agentColor = () => currentAgent()?.options?.color;
-    
-    return (
-      <button
-        type="button"
-        class="agent-switcher-button"
-        onClick={cycleAgent}
-        aria-label="Switch agent"
-        title={currentAgent()?.description || 'Switch agent'}
-        style={agentColor() ? { color: agentColor() } : {}}
-      >
-        {currentAgent()?.name || 'Agent'}
-      </button>
-    );
-  };
-
   return (
     <form class="input-container" onSubmit={handleSubmit}>
       <textarea
@@ -89,7 +59,11 @@ export function InputBar(props: InputBarProps) {
       />
       <div class="input-buttons">
         <Show when={props.agents.length > 0}>
-          <AgentSwitcher />
+          <AgentSwitcher
+            agents={props.agents}
+            selectedAgent={props.selectedAgent}
+            onAgentChange={props.onAgentChange}
+          />
         </Show>
         <button
           type="submit"

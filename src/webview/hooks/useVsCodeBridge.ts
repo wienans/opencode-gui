@@ -1,36 +1,8 @@
 import { onMount, onCleanup } from "solid-js";
+import type { MessagePart, Agent, IncomingMessage } from "../types";
 
-// Get VS Code API at module level
 declare const acquireVsCodeApi: any;
 const vscode = acquireVsCodeApi();
-
-export interface MessagePart {
-  id: string;
-  type: "text" | "reasoning" | "tool" | "file" | "step-start" | "step-finish";
-  text?: string;
-  tool?: string;
-  state?: any;
-  snapshot?: string;
-  messageID?: string; // Added by extension for streaming
-}
-
-export interface Agent {
-  name: string;
-  description?: string;
-  mode: "subagent" | "primary" | "all";
-  builtIn: boolean;
-  options?: {
-    color?: string;
-    [key: string]: unknown;
-  };
-}
-
-export interface IncomingMessage {
-  id: string;
-  role?: "user" | "assistant";
-  text?: string;
-  parts?: MessagePart[];
-}
 
 export interface VsCodeBridgeCallbacks {
   onInit: (ready: boolean) => void;

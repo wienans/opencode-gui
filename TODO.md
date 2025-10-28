@@ -124,104 +124,59 @@
 
 #### AgentSwitcher component
 
-- [ ] Move to `src/webview/components/AgentSwitcher.tsx` (already exists but may need refinement)
-- [ ] Keep current button-only switcher design
-- [ ] Props: `agents`, `selectedAgent`, `onAgentChange`
+- [x] Move to `src/webview/components/AgentSwitcher.tsx` (already exists but may need refinement)
+- [x] Keep current button-only switcher design
+- [x] Props: `agents`, `selectedAgent`, `onAgentChange`
 
 #### MessageList component
 
-- [ ] Create `src/webview/components/MessageList.tsx`
-- [ ] Renders messages array using MessageItem components
-- [ ] Owns auto-scroll behavior with "stick to bottom only if near bottom" logic
-- [ ] Add bottom sentinel div for scrollIntoView
-- [ ] Check if user is near bottom (within 40px) before auto-scrolling
-- [ ] Props: `messages`, `isThinking`
-
-Example auto-scroll:
-
-```typescript
-const shouldStick = () => {
-  const el = containerRef;
-  return el.scrollHeight - el.scrollTop - el.clientHeight < 40;
-};
-createEffect(() => {
-  props.messages;
-  props.isThinking;
-  if (shouldStick())
-    requestAnimationFrame(() => endRef.scrollIntoView({ behavior: "auto" }));
-});
-```
+- [x] Create `src/webview/components/MessageList.tsx`
+- [x] Renders messages array using MessageItem components
+- [x] Owns auto-scroll behavior with "stick to bottom only if near bottom" logic
+- [x] Add bottom sentinel div for scrollIntoView
+- [x] Check if user is near bottom (within 40px) before auto-scrolling
+- [x] Props: `messages`, `isThinking`
 
 #### MessageItem component
 
-- [ ] Create `src/webview/components/MessageItem.tsx`
-- [ ] Renders a single message with proper styling for user vs assistant
-- [ ] Delegates part rendering to MessagePartRenderer
-- [ ] Props: `message`
+- [x] Create `src/webview/components/MessageItem.tsx`
+- [x] Renders a single message with proper styling for user vs assistant
+- [x] Delegates part rendering to MessagePartRenderer
+- [x] Props: `message`
 
 #### MessagePartRenderer component
 
-- [ ] Create `src/webview/components/MessagePartRenderer.tsx`
-- [ ] Switch on part type and delegate to specific part components
-- [ ] Props: `part`
+- [x] Create `src/webview/components/MessagePartRenderer.tsx`
+- [x] Switch on part type and delegate to specific part components
+- [x] Props: `part`
 
 #### Message part components
 
-- [ ] Create `src/webview/components/parts/TextBlock.tsx` - renders text parts
-- [ ] Create `src/webview/components/parts/ReasoningBlock.tsx` - renders reasoning blocks
-- [ ] Create `src/webview/components/parts/ToolCall.tsx` - move current renderToolPart logic here
-- [ ] Each component is small and presentational
+- [x] Create `src/webview/components/parts/TextBlock.tsx` - renders text parts
+- [x] Create `src/webview/components/parts/ReasoningBlock.tsx` - renders reasoning blocks
+- [x] Create `src/webview/components/parts/ToolCall.tsx` - move current renderToolPart logic here
+- [x] Each component is small and presentational
 
 ### 5. Create shared types file
 
-- [ ] Create `src/webview/types.ts`
-- [ ] Move Message, MessagePart, ToolState, Agent interfaces
-- [ ] Create union type for all host→webview message events
-- [ ] Import in all components and hooks for type safety
-- [ ] Prevents handler drift between extension and webview
+- [x] Create `src/webview/types.ts`
+- [x] Move Message, MessagePart, ToolState, Agent interfaces
+- [x] Create union type for all host→webview message events
+- [x] Import in all components and hooks for type safety
+- [x] Prevents handler drift between extension and webview
 
 ### 6. Simplify App.tsx to orchestration-only
 
-- [ ] Keep only state signals (input, messages, isThinking, isReady, agents, selectedAgent)
-- [ ] Wire useVsCodeBridge with update callbacks using messageUtils helpers
-- [ ] Compose InputBar and MessageList components
-- [ ] Remove all direct message handling logic, auto-scroll, textarea resize
-- [ ] App becomes thin orchestration layer (~100 lines vs current 440)
-
-Example structure:
-
-```typescript
-function App() {
-  const [input, setInput] = createSignal("");
-  const [messages, setMessages] = createSignal<Message[]>([]);
-  // ... other signals
-
-  const bridge = useVsCodeBridge({
-    partUpdate: (part) => setMessages(prev => applyPartUpdate(prev, part)),
-    messageUpdate: (msg) => setMessages(prev => applyMessageUpdate(prev, msg)),
-    // ... other handlers
-  });
-
-  const sendPrompt = () => {
-    bridge.send({ type: "sendPrompt", text: input(), agent: selectedAgent() });
-    setInput("");
-  };
-
-  return (
-    <div class="app">
-      <Show when={!messages().length}><InputBar .../></Show>
-      <MessageList messages={messages()} isThinking={isThinking()} />
-      <Show when={messages().length}><InputBar .../></Show>
-    </div>
-  );
-}
-```
+- [x] Keep only state signals (input, messages, isThinking, isReady, agents, selectedAgent)
+- [x] Wire useVsCodeBridge with update callbacks using messageUtils helpers
+- [x] Compose InputBar and MessageList components
+- [x] Remove all direct message handling logic, auto-scroll, textarea resize
+- [x] App becomes thin orchestration layer (~120 lines vs previous 226)
 
 ### 7. Small cleanups and improvements
 
-- [ ] Replace `Date.now().toString()` with `crypto.randomUUID()` for message IDs
-- [ ] Add `createMemo` for derived values like `hasMessages` and `currentAgent`
-- [ ] Wrap verbose console.log with debug flag: `const DEBUG = false; if (DEBUG) console.log(...)`
-- [ ] Add placeholder text to textarea (e.g., "Ask anything…") for better UX
-- [ ] Ensure applyMessageUpdate never clobbers streaming parts unless incoming.parts is explicitly present
-- [ ] Add throttling or "stick to bottom" guard to prevent scroll jank during streaming
+- [x] Replace `Date.now().toString()` with `crypto.randomUUID()` for message IDs
+- [x] Add `createMemo` for derived values like `hasMessages` and `currentAgent`
+- [x] Wrap verbose console.log with debug flag: `const DEBUG = false; if (DEBUG) console.log(...)`
+- [x] Ensure applyMessageUpdate never clobbers streaming parts unless incoming.parts is explicitly present
+- [x] Add "stick to bottom" guard to prevent scroll jank during streaming
