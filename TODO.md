@@ -70,6 +70,12 @@
   - **Details**: Changed prompt input focus-visible box-shadow from 2px to 1px for more subtle focus indicator. Updated padding to 6px all around for prompt input (was 8px 12px), user messages (was 8px), and assistant messages (was 4px 0). Creates more compact, consistent appearance throughout the interface with better balance between compactness and readability.
   - **Documentation**: See [docs/todos/style-refinements-focus-padding.md](docs/todos/style-refinements-focus-padding.md)
 
+- [x] Button spacing and positioning: Reduce spacing between action buttons and prompt input to 4px, and move buttons above input when at bottom of pane
+
+  - **Status**: Completed - button spacing tightened and positioning optimized
+  - **Details**: Reduced button spacing from 8px to 4px for tighter layout. Added flex-direction to input-container and used column-reverse for has-messages state, so buttons appear above the textarea when input is at bottom. More ergonomic layout with buttons easily accessible above input field.
+  - **Documentation**: See [docs/todos/button-spacing-positioning.md](docs/todos/button-spacing-positioning.md)
+
 - [ ] Markdown support in assistant messages
 - [ ] @-mention support
 - [ ] New session button

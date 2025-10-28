@@ -21,10 +21,13 @@ body {
   padding: 8px;
   background-color: var(--vscode-sideBar-background);
   flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
 }
 
 .app--has-messages .input-container {
   border-top: 1px solid var(--vscode-panel-border);
+  flex-direction: column-reverse;
 }
 
 .prompt-input {
@@ -70,7 +73,12 @@ body {
   justify-content: space-between;
   align-items: center;
   gap: 8px;
-  margin-top: 8px;
+  margin-top: 4px;
+}
+
+.app--has-messages .input-buttons {
+  margin-top: 0;
+  margin-bottom: 4px;
 }
 
 .shortcut-button {
