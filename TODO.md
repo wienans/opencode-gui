@@ -104,23 +104,23 @@
 
 ### 3. Extract message update helpers
 
-- [ ] Create `src/webview/utils/messageUtils.ts`
-- [ ] Implement `applyPartUpdate(messages, part)` - handles creating or updating message with streaming parts
-- [ ] Implement `applyMessageUpdate(messages, incoming)` - handles message create/update with role, text, and parts
-- [ ] Keep arrays immutable with proper spread operations
-- [ ] Handle create-or-update idempotently (check if message exists, if not create it)
-- [ ] Replace inline message update logic in App.tsx with: `setMessages(prev => applyPartUpdate(prev, payload))`
-- [ ] Benefits: Pure functions, easy to test, safer streaming behavior, no special-case filtering
+- [x] Create `src/webview/utils/messageUtils.ts`
+- [x] Implement `applyPartUpdate(messages, part)` - handles creating or updating message with streaming parts
+- [x] Implement `applyMessageUpdate(messages, incoming)` - handles message create/update with role, text, and parts
+- [x] Keep arrays immutable with proper spread operations
+- [x] Handle create-or-update idempotently (check if message exists, if not create it)
+- [x] Replace inline message update logic in App.tsx with: `setMessages(prev => applyPartUpdate(prev, payload))`
+- [x] Benefits: Pure functions, easy to test, safer streaming behavior, no special-case filtering
 
 ### 4. Split into focused components
 
 #### InputBar component
 
-- [ ] Create `src/webview/components/InputBar.tsx`
-- [ ] Contains textarea, submit button logic, keyboard shortcuts
-- [ ] Integrate AgentSwitcher component
-- [ ] Handle auto-resize logic for textarea (move from App.tsx)
-- [ ] Props: `value`, `onInput`, `onSubmit`, `disabled`, `selectedAgent`, `agents`, `onAgentChange`
+- [x] Create `src/webview/components/InputBar.tsx`
+- [x] Contains textarea, submit button logic, keyboard shortcuts
+- [x] Integrate AgentSwitcher component
+- [x] Handle auto-resize logic for textarea (move from App.tsx)
+- [x] Props: `value`, `onInput`, `onSubmit`, `disabled`, `selectedAgent`, `agents`, `onAgentChange`
 
 #### AgentSwitcher component
 
@@ -225,18 +225,3 @@ function App() {
 - [ ] Add placeholder text to textarea (e.g., "Ask anything…") for better UX
 - [ ] Ensure applyMessageUpdate never clobbers streaming parts unless incoming.parts is explicitly present
 - [ ] Add throttling or "stick to bottom" guard to prevent scroll jank during streaming
-
-### Benefits of this refactor
-
-- Simpler App.tsx (440 lines → ~100 lines) with clear separation of concerns
-- Better testability with pure message update helpers
-- Safer streaming updates with no special-case "thinking" message
-- Cleaner component boundaries (transport, state, presentation separated)
-- Easier to add new features (markdown rendering, virtualization, new part types)
-- Better type safety with centralized types.ts
-
-### Estimated effort
-
-- **Simple path**: 1-3 hours for core componentization and helper extraction
-- **Type safety & cleanups**: <1 hour for types.ts and small improvements
-- **Total**: 2-4 hours for complete refactor
