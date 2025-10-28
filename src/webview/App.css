@@ -31,7 +31,7 @@ body {
   width: 100%;
   min-height: 36px;
   max-height: 120px;
-  padding: 8px 12px;
+  padding: 4px;
   border: 1px solid var(--vscode-input-border);
   border-radius: 4px;
   background-color: var(--vscode-input-background);
@@ -52,7 +52,7 @@ body {
 .prompt-input:focus-visible {
   outline: none;
   border-color: var(--vscode-focusBorder);
-  box-shadow: 0 0 0 2px var(--vscode-focusBorder) inset;
+  box-shadow: 0 0 0 1px var(--vscode-focusBorder) inset;
 }
 
 .prompt-input:disabled {
@@ -203,7 +203,7 @@ body {
 
 .message--user .message-content {
   width: 100%;
-  padding: 8px;
+  padding: 4px;
   background-color: var(--vscode-input-background);
   border: 1px solid var(--vscode-input-border);
   border-radius: 4px;
@@ -216,7 +216,7 @@ body {
 
 .message--assistant .message-content {
   width: 100%;
-  padding: 4px 0;
+  padding: 4px;
   background-color: transparent;
   color: var(--vscode-foreground);
   line-height: 1.6;
