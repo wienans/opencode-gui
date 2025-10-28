@@ -44,6 +44,15 @@ export class OpenCodeViewProvider implements vscode.WebviewViewProvider {
           case 'getAgents':
             await this._handleGetAgents();
             return;
+          case 'load-sessions':
+            await this._handleLoadSessions();
+            return;
+          case 'switch-session':
+            await this._handleSwitchSession(message.sessionId);
+            return;
+          case 'create-session':
+            await this._handleCreateSession(message.title);
+            return;
         }
       }
     );
@@ -62,6 +71,58 @@ export class OpenCodeViewProvider implements vscode.WebviewViewProvider {
       this._sendMessage({ 
         type: 'agentList', 
         agents: [] 
+      });
+    }
+  }
+
+  private async _handleLoadSessions() {
+    try {
+      const sessions = await this._openCodeService.listSessions();
+      this._sendMessage({
+        type: 'session-list',
+        sessions
+      });
+    } catch (error) {
+      console.error('Error loading sessions:', error);
+      this._sendMessage({
+        type: 'session-list',
+        sessions: []
+      });
+    }
+  }
+
+  private async _handleSwitchSession(sessionId: string) {
+    try {
+      await this._openCodeService.switchSession(sessionId);
+      this._sendMessage({
+        type: 'session-switched',
+        sessionId,
+        title: this._openCodeService.getCurrentSessionTitle()
+      });
+    } catch (error) {
+      console.error('Error switching session:', error);
+      this._sendMessage({
+        type: 'error',
+        message: `Failed to switch session: ${(error as Error).message}`
+      });
+    }
+  }
+
+  private async _handleCreateSession(title?: string) {
+    try {
+      const sessionId = await this._openCodeService.createNewSession(title);
+      this._sendMessage({
+        type: 'session-switched',
+        sessionId,
+        title: this._openCodeService.getCurrentSessionTitle()
+      });
+      // Reload sessions list
+      await this._handleLoadSessions();
+    } catch (error) {
+      console.error('Error creating session:', error);
+      this._sendMessage({
+        type: 'error',
+        message: `Failed to create session: ${(error as Error).message}`
       });
     }
   }

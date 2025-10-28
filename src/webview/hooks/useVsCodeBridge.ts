@@ -1,5 +1,5 @@
 import { onMount, onCleanup } from "solid-js";
-import type { MessagePart, Agent, IncomingMessage, WebviewMessage } from "../types";
+import type { MessagePart, Agent, IncomingMessage, WebviewMessage, Session } from "../types";
 
 declare const acquireVsCodeApi: any;
 const vscode = acquireVsCodeApi();
@@ -12,6 +12,8 @@ export interface VsCodeBridgeCallbacks {
   onMessageUpdate: (message: IncomingMessage) => void;
   onResponse: (payload: { text?: string; parts?: MessagePart[] }) => void;
   onError: (message: string) => void;
+  onSessionList: (sessions: Session[]) => void;
+  onSessionSwitched: (sessionId: string, title: string) => void;
 }
 
 export function useVsCodeBridge(callbacks: VsCodeBridgeCallbacks) {
@@ -53,6 +55,14 @@ export function useVsCodeBridge(callbacks: VsCodeBridgeCallbacks) {
 
         case "error":
           callbacks.onError(message.message);
+          break;
+
+        case "session-list":
+          callbacks.onSessionList(message.sessions || []);
+          break;
+
+        case "session-switched":
+          callbacks.onSessionSwitched(message.sessionId, message.title);
           break;
       }
     };

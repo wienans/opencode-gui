@@ -1,10 +1,11 @@
 /* @jsxImportSource solid-js */
-import { createSignal, createMemo, Show } from "solid-js";
+import { createSignal, createMemo, Show, onMount } from "solid-js";
 import { InputBar } from "./components/InputBar";
 import { MessageList } from "./components/MessageList";
+import { TopBar } from "./components/TopBar";
 import { useVsCodeBridge } from "./hooks/useVsCodeBridge";
 import { applyPartUpdate, applyMessageUpdate } from "./utils/messageUtils";
-import type { Message, Agent } from "./types";
+import type { Message, Agent, Session } from "./types";
 
 const DEBUG = false;
 
@@ -15,6 +16,9 @@ function App() {
   const [isReady, setIsReady] = createSignal(false);
   const [agents, setAgents] = createSignal<Agent[]>([]);
   const [selectedAgent, setSelectedAgent] = createSignal<string | null>(null);
+  const [sessions, setSessions] = createSignal<Session[]>([]);
+  const [currentSessionId, setCurrentSessionId] = createSignal<string | null>(null);
+  const [currentSessionTitle, setCurrentSessionTitle] = createSignal<string>("New Session");
 
   const hasMessages = createMemo(() =>
     messages().some((m) => m.type === "user" || m.type === "assistant")
@@ -80,6 +84,20 @@ function App() {
         },
       ]);
     },
+
+    onSessionList: (sessionList) => {
+      setSessions(sessionList);
+    },
+
+    onSessionSwitched: (sessionId, title) => {
+      setCurrentSessionId(sessionId);
+      setCurrentSessionTitle(title);
+      setMessages([]);
+    },
+  });
+
+  onMount(() => {
+    send({ type: "load-sessions" });
   });
 
   const handleSubmit = () => {
@@ -98,8 +116,24 @@ function App() {
     setInput("");
   };
 
+  const handleSessionSelect = (sessionId: string) => {
+    send({ type: "switch-session", sessionId });
+  };
+
+  const handleNewSession = () => {
+    send({ type: "create-session" });
+  };
+
   return (
     <div class={`app ${hasMessages() ? "app--has-messages" : ""}`}>
+      <TopBar
+        sessions={sessions()}
+        currentSessionId={currentSessionId()}
+        currentSessionTitle={currentSessionTitle()}
+        onSessionSelect={handleSessionSelect}
+        onNewSession={handleNewSession}
+      />
+
       <Show when={!hasMessages()}>
         <InputBar
           value={input()}

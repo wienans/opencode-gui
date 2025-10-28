@@ -96,12 +96,6 @@
   - **Benefits**: Clean separation between transport layer and UI state management, better testability, improved type safety, App.tsx more focused on orchestration
   - **Documentation**: See [docs/todos/useVsCodeBridge.md](docs/todos/useVsCodeBridge.md)
 
-- [ ] Markdown support in assistant messages
-- [ ] @-mention support
-- [ ] New session button
-- [ ] Session switcher
-- [ ] Better tool calls
-
 ### 3. Extract message update helpers
 
 - [x] Create `src/webview/utils/messageUtils.ts`
@@ -180,3 +174,14 @@
 - [x] Wrap verbose console.log with debug flag: `const DEBUG = false; if (DEBUG) console.log(...)`
 - [x] Ensure applyMessageUpdate never clobbers streaming parts unless incoming.parts is explicitly present
 - [x] Add "stick to bottom" guard to prevent scroll jank during streaming
+
+- [x] Session switcher and new session button. I want this to be similar to Amp's setup, which is that the session switcher is all the way at the top, it's a button you can click it, it opens a dropdown which shows the other session titles. I don't know if Opencode SDK supports the session titles, we'll have to research this. To the right of the session switcher is a quiet-style new session button. Collectively, the session switcher and the new session button make up the top bar, and its separated from the message pane with a divider.
+
+  - **Status**: Completed - session switcher fully implemented with dropdown UI, backend integration, and styling
+  - **Details**: Created TopBar component with SessionSwitcher (dropdown showing all sessions with titles and timestamps) and NewSessionButton (+ button). Backend fully wired up with OpenCode API session management (list, create, switch). Session titles ARE supported by OpenCode SDK. Top bar separated from messages with border divider. All styled using VSCode theme variables.
+  - **Documentation**: See [docs/todos/session-switcher.md](docs/todos/session-switcher.md)
+  - **Known Limitations**: No message history loading when switching sessions, session titles not editable, no session deletion, no persistence across reloads, dropdown doesn't close on outside click
+  
+- [ ] Markdown support in assistant messages
+- [ ] @-mention support
+- [ ] Better tool calls

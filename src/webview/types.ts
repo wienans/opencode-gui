@@ -38,6 +38,17 @@ export interface Agent {
   };
 }
 
+export interface Session {
+  id: string;
+  title: string;
+  projectID: string;
+  directory: string;
+  time: {
+    created: number;
+    updated: number;
+  };
+}
+
 export interface IncomingMessage {
   id: string;
   role?: "user" | "assistant";
@@ -52,9 +63,14 @@ export type HostMessage =
   | { type: "part-update"; part: MessagePart & { messageID: string } }
   | { type: "message-update"; message: IncomingMessage }
   | { type: "response"; text?: string; parts?: MessagePart[] }
-  | { type: "error"; message: string };
+  | { type: "error"; message: string }
+  | { type: "session-list"; sessions: Session[] }
+  | { type: "session-switched"; sessionId: string; title: string };
 
 export type WebviewMessage =
   | { type: "ready" }
   | { type: "getAgents" }
-  | { type: "sendPrompt"; text: string; agent: string | null };
+  | { type: "sendPrompt"; text: string; agent: string | null }
+  | { type: "load-sessions" }
+  | { type: "switch-session"; sessionId: string }
+  | { type: "create-session"; title?: string };

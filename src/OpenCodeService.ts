@@ -31,6 +31,7 @@ interface OpencodeInstance {
 export class OpenCodeService {
   private opencode: OpencodeInstance | null = null;
   private currentSessionId: string | null = null;
+  private currentSessionTitle: string = "New Session";
   private isInitializing = false;
   private workspaceDir?: string;
   private agents: Agent[] = [];
@@ -169,8 +170,59 @@ export class OpenCodeService {
 
     const session = response.data as Session;
     this.currentSessionId = session.id;
+    this.currentSessionTitle = session.title;
 
     return this.currentSessionId;
+  }
+
+  async listSessions(): Promise<Session[]> {
+    if (!this.opencode) {
+      throw new Error("OpenCode not initialized");
+    }
+
+    const response = await this.opencode.client.session.list();
+
+    if (response.error) {
+      throw new Error(
+        `Failed to list sessions: ${JSON.stringify(response.error)}`
+      );
+    }
+
+    return response.data || [];
+  }
+
+  async switchSession(sessionId: string): Promise<void> {
+    if (!this.opencode) {
+      throw new Error("OpenCode not initialized");
+    }
+
+    const response = await this.opencode.client.session.get({
+      path: { id: sessionId },
+    });
+
+    if (response.error) {
+      throw new Error(
+        `Failed to get session: ${JSON.stringify(response.error)}`
+      );
+    }
+
+    const session = response.data as Session;
+    this.currentSessionId = session.id;
+    this.currentSessionTitle = session.title;
+  }
+
+  async createNewSession(title?: string): Promise<string> {
+    const timestamp = new Date().toLocaleString();
+    const sessionTitle = title || `Session ${timestamp}`;
+    return this.createSession(sessionTitle);
+  }
+
+  getCurrentSessionId(): string | null {
+    return this.currentSessionId;
+  }
+
+  getCurrentSessionTitle(): string {
+    return this.currentSessionTitle;
   }
 
   async sendPrompt(
