@@ -401,7 +401,7 @@ function getToolDisplayInfo(
           (inputs as BashInput).description ||
           (inputs as BashInput).command ||
           "Run command",
-        monospace: true,
+        monospace: false,
       };
     // Todo tools (lighter weight)
     case "todowrite":

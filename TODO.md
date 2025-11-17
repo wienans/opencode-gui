@@ -189,3 +189,4 @@
 - [ ] @-mention support
 - [ ] Settings panel
 - [ ] Model switcher
+- [ ] Fork, undo, handoff
