@@ -110,17 +110,15 @@ npm run publish
 ```
 
 This publishes to both VS Code Marketplace and Open VSX. Requires:
-- VS Code Marketplace PAT (login with `npx vsce login TanishqKancharla`)
-- Open VSX key in `.env` as `OPEN_VSX_KEY`
-
-Azure DevOps for PAT management: https://dev.azure.com/tanishqk/
+- VS Code Marketplace PAT (login with `npx vsce login <publisher>`)
+- Open VSX token set as `OVSX_PAT` environment variable
 
 ## Debugging
 
 Extension logs:
 
 - Output panel: Command Palette → "Output" → Select "OpenCode" from dropdown
-- Log files: the extension writes logs to this file: '/Users/tanishqkancharla/Library/Application Support/Cursor/logs/20251009T174918/window50/exthost/opencode.opencode-vscode/OpenCode.log'
+- Log files: Check VSCode/Cursor application support directory for extension logs
 
 ## API Configuration Required
 

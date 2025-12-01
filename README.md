@@ -4,6 +4,8 @@ A VSCode sidebar extension for OpenCode - the AI coding agent. Simple chat inter
 
 ![OpenCode VSCode Extension Preview](media/preview.png)
 
+> **Note**: This is an independent community project and is not officially affiliated with or maintained by the OpenCode team.
+
 ## Prerequisites
 
 1. **OpenCode CLI must be installed**:
@@ -172,13 +174,18 @@ opencode-vscode-2/
 
 ## Publishing
 
-To publish a new version to the VS Code Marketplace:
+To publish a new version:
 
 1. Bump the version in `package.json`
-2. Build and package: `npm run build && npx vsce package`
-3. Publish: `npx vsce publish`
+2. Set environment variable: `export OVSX_PAT=your_open_vsx_token`
+3. Login to VS Code Marketplace: `npx vsce login <publisher>`
+4. Run: `npm run publish`
 
-**Azure DevOps PAT**: The publisher uses Azure DevOps at https://dev.azure.com/tanishqk/. If your PAT expires, create a new one there with "Marketplace (Manage)" scope, then run `npx vsce login TanishqKancharla` with the new token.
+This publishes to both VS Code Marketplace and Open VSX Registry.
+
+**Note**: You'll need:
+- A VS Code Marketplace Personal Access Token (PAT) from Azure DevOps with "Marketplace (Manage)" scope
+- An Open VSX token set as `OVSX_PAT` environment variable
 
 ## Troubleshooting
 
