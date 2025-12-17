@@ -35,7 +35,7 @@ export function SessionSwitcher(props: SessionSwitcherProps) {
   return (
     <div class="session-switcher">
       <button
-        class="session-switcher-button"
+        class={`session-switcher-button ${isOpen() ? "active" : ""}`}
         onClick={toggleDropdown}
         disabled={props.sessions.length === 0}
       >

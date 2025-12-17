@@ -35,7 +35,7 @@ For these tasks, the following steps are also recommended:
 1. Use all the tools available to you.
 2. Use the todowrite to plan the task if required.
 3. Use search tools like grep and glob to understand the codebase and the user's query. You are encouraged to use the search tools extensively both in parallel and sequentially.
-4. After completing a task, you MUST run any lint and typecheck commands (e.g., pnpm run build, pnpm run type-check, cargo check, go build, etc.) that were provided to you to ensure your code is correct. If you are unable to find the correct command, ask the user for the command to run and if they supply it, proactively suggest writing it to AGENTS.md so that you will know to run it next time. Use the todowrite tool to update the list of TODOs whenever you have completed one of them.
+4. After completing a task, you MUST run any lint and typecheck commands (e.g., npm run build, npm run type-check, cargo check, go build, etc.) that were provided to you to ensure your code is correct. If you are unable to find the correct command, ask the user for the command to run and if they supply it, proactively suggest writing it to AGENTS.md so that you will know to run it next time. Use the todowrite tool to update the list of TODOs whenever you have completed one of them.
 
 For maximum efficiency, whenever you need to perform multiple independent operations, invoke all relevant tools simultaneously rather than sequentially.
 

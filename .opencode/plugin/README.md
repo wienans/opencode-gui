@@ -33,16 +33,6 @@ This directory contains custom plugins for Opencode.
 - Context is only added once per session to avoid duplication
 - LLM receives hierarchical context from specific → general
 
-## db-schema-guard.ts
-
-**Purpose**: Prevents database queries before reading schema files.
-
-**How it works**:
-
-- Tracks when schema files are read during a session
-- Throws an error if `query_db` tool is used before all schema files are read
-- Ensures the LLM has proper context before executing database queries
-
 ## sound-notifications.ts
 
 **Purpose**: Provides audio feedback for agent events.

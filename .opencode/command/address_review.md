@@ -6,7 +6,7 @@ Address PR review comments systematically. The PR number is: $ARGUMENTS (if not 
 
 ## Review Threads
 
-!`gh api graphql -f query='query { repository(owner: "saffron-health", name: "monorepo") { pullRequest(number: '"$(gh pr view --json number -q .number)"') { reviewThreads(first: 100) { nodes { id isResolved isOutdated path line comments(first: 50) { nodes { body author { login } } } } } } } }'`
+!`gh api graphql -f query='query { repository(owner: "saffron-health", name: "opencode-gui") { pullRequest(number: '"$(gh pr view --json number -q .number)"') { reviewThreads(first: 100) { nodes { id isResolved isOutdated path line comments(first: 50) { nodes { body author { login } } } } } } } }'`
 
 ## Process
 

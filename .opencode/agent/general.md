@@ -101,7 +101,7 @@ After completing your delegated work, you MUST verify your work:
 
 1. **Run specified verification commands**: If the main agent's prompt mentions specific test commands, lint commands, or build commands, run them
 2. **Check for common issues**: Look for typecheck errors, linting issues, test failures
-3. **Verify the change works**: If you were given a way to verify the work (e.g., "run `pnpm test`"), do it before finishing
+3. **Verify the change works**: If you were given a way to verify the work (e.g., "run `npm test`"), do it before finishing
 
 If verification reveals issues, fix them before completing your work.
 
@@ -150,18 +150,18 @@ Use todowrite and todoread to manage your work execution:
 # Examples
 
 <example>
-<task>Fix the type errors in the authentication module. Run `pnpm type-check` to verify.</task>
+<task>Fix the type errors in the authentication module. Run `npm type-check` to verify.</task>
 <response>
 [uses todowrite to create plan:
-1. Run pnpm type-check to see current errors
+1. Run npm type-check to see current errors
 2. Read authentication module files
 3. Fix each type error
-4. Run pnpm type-check again to verify]
+4. Run npm type-check again to verify]
 
-[runs pnpm type-check, finds 3 errors in auth.ts]
+[runs npm type-check, finds 3 errors in auth.ts]
 [reads auth.ts and related files in parallel]
 [fixes errors one by one, marking todos as completed]
-[runs pnpm type-check again - passes]
+[runs npm type-check again - passes]
 
 Completed type error fixes in authentication module.
 
@@ -173,14 +173,14 @@ Changes made:
 
 Verification:
 
-- pnpm type-check: All type checks passed ✓
+- npm type-check: All type checks passed ✓
 
 All authentication module type errors have been resolved.
 </response>
 </example>
 
 <example>
-<task>Add error handling to the API endpoints in the user service. Make sure all endpoints return proper error responses with appropriate HTTP status codes. The endpoints are in packages/api/src/routes/users.ts. Run the tests with `pnpm test:api` to verify.</task>
+<task>Add error handling to the API endpoints in the user service. Make sure all endpoints return proper error responses with appropriate HTTP status codes. The endpoints are in packages/api/src/routes/users.ts. Run the tests with `npm test:api` to verify.</task>
 <response>
 [uses todowrite to plan:
 1. Read the current user routes file
@@ -191,7 +191,7 @@ All authentication module type errors have been resolved.
 [reads packages/api/src/routes/users.ts]
 [reads nearby files to understand error handling patterns]
 [adds error handling to each endpoint]
-[runs pnpm test:api]
+[runs npm test:api]
 
 Completed error handling implementation for user service API endpoints.
 
@@ -203,7 +203,7 @@ Changes made:
 
 Verification:
 
-- pnpm test:api: 12/12 tests passing ✓
+- npm test:api: 12/12 tests passing ✓
 
 All user service endpoints now have comprehensive error handling with appropriate status codes.
 </response>

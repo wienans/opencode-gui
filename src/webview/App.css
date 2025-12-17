@@ -5,6 +5,41 @@
 
 :root {
   color-scheme: light dark;
+  
+  /* Spacing */
+  --spacing-xs: 4px;
+  --spacing-sm: 6px;
+  --spacing-md: 8px;
+  
+  /* Typography */
+  --font-size-base: var(--vscode-font-size);
+  --font-size-small: calc(var(--vscode-font-size) - 1px);
+  
+  /* Backgrounds */
+  --input-background: light-dark(
+    color-mix(in oklab, black 8%, var(--vscode-sideBar-background)),
+    color-mix(in oklab, white 8%, var(--vscode-sideBar-background))
+  );
+  --input-background-muted: light-dark(
+    color-mix(in oklab, black 4%, var(--vscode-sideBar-background)),
+    color-mix(in oklab, white 4%, var(--vscode-sideBar-background))
+  );
+  --hover-background: light-dark(
+    color-mix(in oklab, black 6%, var(--vscode-sideBar-background)),
+    color-mix(in oklab, white 6%, var(--vscode-sideBar-background))
+  );
+  --hover-background-muted: light-dark(
+    color-mix(in oklab, black 5%, var(--vscode-sideBar-background)),
+    color-mix(in oklab, white 5%, var(--vscode-sideBar-background))
+  );
+  
+  /* Borders */
+  --border-color: var(--vscode-input-border);
+  --border-color-muted: color-mix(in oklab, var(--vscode-input-border) 60%, var(--vscode-sideBar-background));
+  
+  /* Padding combinations */
+  --padding-button: var(--spacing-sm) var(--spacing-md);
+  --padding-button-compact: var(--spacing-xs) var(--spacing-sm);
 }
 
 /* Use VSCode theme variables */
@@ -27,29 +62,26 @@ body {
 
 /* Input Container */
 .input-container {
-  padding: 6px;
-  background-color: var(--vscode-input-background);
-  border: 1px solid var(--vscode-input-border);
+  padding: var(--spacing-sm);
+  background-color: var(--input-background);
+  border: 1px solid var(--border-color);
   border-radius: 4px;
   flex-shrink: 0;
   display: flex;
   flex-direction: column;
-  gap: 4px;
-  margin: 8px;
+  gap: var(--spacing-xs);
+  margin: var(--spacing-md);
   cursor: text;
 }
 
 .input-container:focus-within {
-  background-color: light-dark(
-    color-mix(in oklab, black 2%, var(--vscode-input-background)),
-    color-mix(in oklab, white 2%, var(--vscode-input-background))
-  );
-  border-color: color-mix(in oklab, var(--vscode-foreground) 30%, var(--vscode-input-border));
+  background-color: var(--input-background);
+  border-color: color-mix(in oklab, var(--vscode-foreground) 20%, var(--border-color));
 }
 
 .input-divider {
   height: 1px;
-  background-color: var(--vscode-input-border);
+  background-color: var(--border-color);
   flex-shrink: 0;
 }
 
@@ -63,7 +95,7 @@ body {
   background-color: transparent;
   color: var(--vscode-input-foreground);
   font-family: var(--vscode-font-family);
-  font-size: var(--vscode-font-size);
+  font-size: var(--font-size-base);
   line-height: 20px;
   resize: none;
   outline: none;
@@ -93,17 +125,17 @@ body {
   display: flex;
   justify-content: flex-end;
   align-items: center;
-  gap: 8px;
+  gap: var(--spacing-md);
 }
 
 .shortcut-button {
-  padding: 4px 8px;
+  padding: var(--padding-button);
   border: none;
   border-radius: 3px;
   background-color: transparent;
   color: var(--vscode-input-foreground);
   font-family: var(--vscode-font-family);
-  font-size: 11px;
+  font-size: var(--font-size-small);
   cursor: pointer;
   opacity: 0.5;
   line-height: 1;
@@ -112,7 +144,7 @@ body {
 
 .shortcut-button:hover:not(:disabled) {
   opacity: 1;
-  background-color: var(--vscode-input-border);
+  background-color: var(--hover-background);
 }
 
 .shortcut-button:disabled {
@@ -145,7 +177,7 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 4px 8px;
+  padding: var(--padding-button);
 }
 
 .shortcut-button--stop:hover {
@@ -161,9 +193,9 @@ body {
 /* Loading Indicator */
 .loading-indicator {
   font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-  font-size: 14px;
+  font-size: var(--font-size-base);
   color: var(--vscode-descriptionForeground);
-  padding: 8px;
+  padding: var(--spacing-md);
   user-select: none;
 }
 
@@ -174,8 +206,8 @@ body {
   position: relative;
   height: 100%;
   max-height: 100%;
-  scroll-padding: 8px;
-  padding: 8px;
+  scroll-padding: var(--spacing-md);
+  padding: var(--spacing-md);
   overscroll-behavior: contain;
 }
 
@@ -192,9 +224,9 @@ body {
 
 .message--user .message-content {
   width: 100%;
-  padding: 4px 8px;
-  background-color: color-mix(in oklab, var(--vscode-input-background) 50%, transparent);
-  border: 1px solid var(--vscode-input-border);
+  padding: var(--padding-button);
+  background-color: var(--input-background);
+  border: 1px solid var(--border-color);
   border-radius: 4px;
   color: var(--vscode-input-foreground);
   line-height: 20px;
@@ -203,7 +235,7 @@ body {
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: var(--spacing-xs);
 }
 
 .message--assistant .message-content {
@@ -263,10 +295,10 @@ body {
 
 /* Tool Call Styles */
 .tool-call {
-  border: 1px solid color-mix(in oklab,var(--vscode-input-border) 60%, var(--vscode-sideBar-background));
+  border: 1px solid var(--border-color-muted);
   border-radius: 4px;
-  background-color: color-mix(in oklab, white 4%, var(--vscode-sideBar-background));
-  font-size: 13px;
+  background-color: var(--input-background-muted);
+  font-size: var(--font-size-base);
   overflow: hidden;
   display: flex;
   flex-direction: column;
@@ -284,21 +316,21 @@ body {
 
 .tool-call-light {
   padding: 2px 0;
-  font-size: 13px;
+  font-size: var(--font-size-base);
   color: var(--vscode-descriptionForeground);
 }
 
 .tool-header {
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 4px;
+  gap: var(--spacing-md);
+  padding: var(--spacing-xs);
 }
 
 .tool-text {
   flex: 1;
   color: var(--vscode-foreground);
-  font-size: 13px;
+  font-size: var(--font-size-base);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -325,17 +357,17 @@ body {
 
 .tool-output-container {
   background-color: var(--vscode-textCodeBlock-background);
-  border-top: 1px solid color-mix(in oklab,var(--vscode-input-border) 60%, var(--vscode-sideBar-background));
+  border-top: 1px solid var(--border-color-muted);
 }
 
 .tool-output {
   margin: 0;
-  padding: 8px;
+  padding: var(--spacing-md);
   background-color: transparent;
   border: none;
   border-radius: 0;
   font-family: var(--vscode-font-family);
-  font-size: 12px;
+  font-size: var(--font-size-base);
   color: var(--vscode-foreground);
   overflow-x: auto;
   white-space: pre-wrap;
@@ -365,9 +397,9 @@ body {
 .tool-permission-buttons {
   display: flex;
   align-items: center;
-  gap: 4px;
-  padding: 4px;
-  border-top: 1px solid color-mix(in oklab,var(--vscode-input-border) 60%, var(--vscode-sideBar-background));
+  gap: var(--spacing-xs);
+  padding: var(--spacing-xs);
+  border-top: 1px solid var(--border-color-muted);
 }
 
 .permission-spacer {
@@ -377,11 +409,11 @@ body {
 .permission-button {
   display: inline-flex;
   align-items: center;
-  padding: 4px 8px;
+  padding: var(--padding-button);
   border: none;
   border-radius: 3px;
   font-family: var(--vscode-font-family);
-  font-size: 11px;
+  font-size: var(--font-size-small);
   cursor: default;
   line-height: 1;
   user-select: none;
@@ -396,7 +428,7 @@ body {
 
 .permission-button--quiet:hover {
   opacity: 1;
-  background-color: color-mix(in oklab, white 6%, var(--vscode-sideBar-background));
+  background-color: var(--hover-background);
 }
 
 .permission-button--quiet:focus-visible {
@@ -432,7 +464,7 @@ body {
   cursor: pointer;
   list-style: none;
   color: color-mix(in srgb, var(--vscode-foreground) 60%, transparent);
-  font-size: 13px;
+  font-size: var(--font-size-small);
   font-weight: 500;
   user-select: none;
 }
@@ -442,8 +474,8 @@ body {
 }
 
 .reasoning-content {
-  padding: 8px 12px;
-  margin-top: 4px;
+  padding: var(--spacing-md) 12px;
+  margin-top: var(--spacing-xs);
   border-left: 2px solid var(--vscode-panel-border);
   color: var(--vscode-foreground);
   font-style: italic;
@@ -460,21 +492,21 @@ body {
 }
 
 .message--assistant .message-text {
-  padding: 0 4px;
+  padding: 0 var(--spacing-xs);
 }
 
 /* Step Indicator */
 .step-indicator {
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 8px 12px;
-  margin: 4px 0;
+  gap: var(--spacing-md);
+  padding: var(--spacing-md) 12px;
+  margin: var(--spacing-xs) 0;
   border: 1px solid var(--vscode-panel-border);
   border-radius: 4px;
   background-color: var(--vscode-sideBar-background);
   color: var(--vscode-descriptionForeground);
-  font-size: 12px;
+  font-size: var(--font-size-small);
 }
 
 .step-icon {
@@ -500,13 +532,13 @@ body.vscode-high-contrast {
 
 /* Agent Switcher */
 .agent-switcher-button {
-  padding: 4px 6px;
+  padding: var(--padding-button-compact);
   border: none;
   border-radius: 3px;
   background-color: transparent;
   color: var(--vscode-foreground);
   font-family: var(--vscode-font-family);
-  font-size: 11px;
+  font-size: var(--font-size-small);
   cursor: pointer;
   opacity: 0.6;
   white-space: nowrap;
@@ -515,7 +547,7 @@ body.vscode-high-contrast {
 
 .agent-switcher-button:hover {
   opacity: 1;
-  background-color: color-mix(in oklab, white 6%, var(--vscode-sideBar-background));
+  background-color: var(--hover-background);
 }
 
 .agent-switcher-button:focus-visible {
@@ -527,8 +559,8 @@ body.vscode-high-contrast {
 .top-bar {
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 8px;
+  gap: var(--spacing-md);
+  padding: var(--spacing-md);
   background: var(--vscode-sideBar-background);
   border-bottom: 1px solid var(--vscode-panel-border);
   flex-shrink: 0;
@@ -537,6 +569,7 @@ body.vscode-high-contrast {
 /* Session Switcher */
 .session-switcher {
   flex: 1;
+  min-width: 0;
   position: relative;
 }
 
@@ -545,28 +578,25 @@ body.vscode-high-contrast {
   display: inline-flex;
   align-items: center;
   justify-content: space-between;
-  gap: 4px;
-  padding: 4px 6px;
-  border: 1px solid var(--vscode-input-border);
+  gap: var(--spacing-xs);
+  padding: var(--padding-button);
+  border: 1px solid var(--border-color);
   border-radius: 4px;
-  background-color: var(--vscode-input-background);
+  background-color: var(--input-background-muted);
   color: color-mix(in oklab, var(--vscode-foreground) 80%, var(--vscode-sideBar-background));
   font-family: var(--vscode-font-family);
-  font-size: var(--vscode-font-size);
-  font-weight: 550;
+  font-size: var(--font-size-base);
+  font-weight: 500;
   cursor: pointer;
   text-align: left;
   user-select: none;
   box-sizing: border-box;
 }
 
-.session-switcher-button:hover:not(:disabled) {
-  background-color: light-dark(
-    color-mix(in oklab, black 2%, var(--vscode-input-background)),
-    color-mix(in oklab, white 2%, var(--vscode-input-background))
-  );
+.session-switcher-button:hover:not(:disabled), .session-switcher-button:active:not(:disabled), .session-switcher-button.active:not(:disabled) {
+  background-color: var(--hover-background);
   color: var(--vscode-foreground);
-  border-color: var(--vscode-input-border);
+  border-color: var(--border-color);
 }
 
 .session-switcher-button:disabled {
@@ -576,8 +606,8 @@ body.vscode-high-contrast {
 }
 
 .session-switcher-button:focus-visible {
-  outline: none;
-  box-shadow: 0 0 0 1px var(--vscode-focusBorder);
+  outline: 1px solid var(--vscode-focusBorder);
+  outline-offset: 0;
 }
 
 .session-title {
@@ -586,13 +616,17 @@ body.vscode-high-contrast {
   text-overflow: ellipsis;
   white-space: nowrap;
   padding-bottom: 1px;
-  font-size: 12px;
+  font-family: var(--vscode-font-family);
+  font-size: var(--font-size-small);
+  font-weight: 500;
+  /* To align with the session dropdown rows */
+  border-left: 2px solid transparent;
 }
 
 .dropdown-arrow {
   font-size: 10px;
   opacity: 0.7;
-  margin-left: 8px;
+  margin-left: var(--spacing-md);
   flex-shrink: 0;
 }
 
@@ -605,10 +639,9 @@ body.vscode-high-contrast {
   margin-top: 4px;
   max-height: 300px;
   overflow-y: auto;
-  background: var(--vscode-dropdown-background);
-  border: 1px solid var(--vscode-dropdown-border);
+  background: var(--input-background);
+  border: 1px solid var(--border-color);
   border-radius: 4px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
   z-index: 1000;
 }
 
@@ -616,11 +649,12 @@ body.vscode-high-contrast {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 8px;
+  padding: var(--spacing-md);
   cursor: pointer;
-  border-bottom: 1px solid color-mix(in oklab,var(--vscode-input-border) 60%, var(--vscode-sideBar-background));
-  background-color: color-mix(in oklab, white 4%, var(--vscode-sideBar-background));
-  color: color-mix(in oklab, var(--vscode-foreground) 80%, var(--vscode-sideBar-background));
+  border-bottom: 1px solid var(--border-color-muted);
+  border-left: 2px solid transparent;
+  background-color: transparent;
+  color: color-mix(in oklab, var(--vscode-foreground) 80%, var(--input-background));
 }
 
 .session-item:last-child {
@@ -628,21 +662,20 @@ body.vscode-high-contrast {
 }
 
 .session-item:hover {
-  background-color: color-mix(in oklab, white 6%, var(--vscode-sideBar-background));
+  background-color: var(--hover-background);
   color: var(--vscode-foreground);
-  border-bottom-color: var(--vscode-input-border);
 }
 
 .session-item.selected {
-  background-color: color-mix(in oklab, white 6%, var(--vscode-sideBar-background));
+  background-color: var(--hover-background);
   color: var(--vscode-foreground);
-  border-bottom-color: var(--vscode-input-border);
+  border-left-color: var(--vscode-focusBorder);
 }
 
 .session-item-title {
   font-family: var(--vscode-font-family);
-  font-size: 12px;
-  font-weight: 550;
+  font-size: var(--font-size-small);
+  font-weight: 500;
   flex: 1;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -651,9 +684,9 @@ body.vscode-high-contrast {
 }
 
 .session-item-time {
-  font-size: 11px;
+  font-size: var(--font-size-small);
   opacity: 0.7;
-  margin-left: 8px;
+  margin-left: var(--spacing-md);
   flex-shrink: 0;
 }
 
@@ -664,13 +697,13 @@ body.vscode-high-contrast {
   justify-content: center;
   width: 26px;
   height: 26px;
-  padding: 8px;
+  padding: var(--spacing-md);
   border: 1px solid transparent;
   border-radius: 4px;
   background-color: transparent;
   color: var(--vscode-input-foreground);
   font-family: var(--vscode-font-family);
-  font-size: 14px;
+  font-size: var(--font-size-base);
   font-weight: 500;
   cursor: pointer;
   user-select: none;
@@ -680,13 +713,13 @@ body.vscode-high-contrast {
 }
 
 .new-session-button:hover {
-  background-color: color-mix(in oklab, white 4%, var(--vscode-sideBar-background));
+  background-color: var(--hover-background);
   opacity: 1;
 }
 
 .new-session-button:focus-visible {
-  outline: none;
-  box-shadow: 0 0 0 1px var(--vscode-focusBorder);
+  outline: 1px solid var(--vscode-focusBorder);
+  outline-offset: 0;
 }
 
 /* Input Status Row */
@@ -694,7 +727,7 @@ body.vscode-high-contrast {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 6px 10px 0;
+  padding: var(--spacing-sm) 10px 0;
   margin: 0;
   flex-shrink: 0;
 }
@@ -702,7 +735,7 @@ body.vscode-high-contrast {
 /* File Changes Summary */
 .file-changes-summary {
   font-family: var(--vscode-font-family);
-  font-size: 11px;
+  font-size: var(--font-size-small);
   color: var(--vscode-descriptionForeground);
   user-select: none;
   line-height: 12px;
@@ -720,7 +753,7 @@ body.vscode-high-contrast {
 .context-indicator {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: var(--spacing-sm);
   flex-shrink: 0;
   margin-left: auto;
 }
@@ -745,7 +778,7 @@ body.vscode-high-contrast {
 
 .context-indicator__text {
   font-family: var(--vscode-font-family);
-  font-size: 11px;
+  font-size: var(--font-size-small);
   color: var(--vscode-descriptionForeground);
   font-weight: 500;
   user-select: none;
