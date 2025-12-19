@@ -388,7 +388,7 @@ body {
   background-color: var(--input-background);
   border: 1px solid var(--border-color);
   border-radius: 4px;
-  color: var(--input-foreground);
+  color: var(--description-foreground);
   line-height: 20px;
   word-wrap: break-word;
   white-space: pre-wrap;
@@ -396,6 +396,11 @@ body {
   display: flex;
   flex-direction: column;
   gap: var(--spacing-xs);
+  transition: color 0.15s ease-in-out;
+}
+
+.message--user .message-content:hover {
+  color: var(--input-foreground);
 }
 
 .message--assistant .message-content {
