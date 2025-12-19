@@ -65,7 +65,7 @@ export function InputBar(props: InputBarProps) {
     const target = e.target as HTMLElement;
     if (
       !target.closest("button") &&
-      !target.closest(".agent-switcher-button") &&
+      !target.closest(".agent-switcher-trigger") &&
       inputRef
     ) {
       inputRef.focus();
